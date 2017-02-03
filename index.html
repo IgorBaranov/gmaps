@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+<style>
+    /* Always set the map height explicitly to define the size of the div
+     * element that contains the map. */
+    #map {
+        height: 100%;
+    }
+    /* Optional: Makes the sample page fill the window. */
+    html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+    }
+</style>
+
+<div id="map"></div>
+
+<script>
+  function initMap() {
+    const locations = [
+      ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -33.890542, 151.274856, 4],
+      ['Coogee Beach', -33.923036, 151.259052, 5],
+      ['Maroubra Beach', -33.950198, 151.259302, 1],
+      ['Manly Beach', -31.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -32.890542, 149.274856, 4],
+      ['Coogee Beach', -33.923036, 148.259052, 5],
+      ['Maroubra Beach', -34.950198, 149.259302, 1],
+      ['Manly Beach', -31.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -31.890542, 151.274856, 4],
+      ['Coogee Beach', -31.923036, 151.259052, 5],
+      ['Maroubra Beach', -31.950198, 151.259302, 1],
+      ['Manly Beach', -31.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -31.890542, 149.274856, 4],
+      ['Coogee Beach', -30.923036, 148.259052, 5],
+      ['Maroubra Beach', -29.950198, 149.259302, 1],
+      ['Manly Beach', -31.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -28.890542, 151.274856, 4],
+      ['Coogee Beach', -27.923036, 151.259052, 5],
+      ['Maroubra Beach', -26.950198, 151.259302, 1],
+      ['Manly Beach', -31.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -32.890542, 149.274856, 4],
+      ['Coogee Beach', -33.923036, 148.259052, 5],
+      ['Maroubra Beach', -34.950198, 149.259302, 1],
+      ['Manly Beach', -29.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -29.890542, 151.274856, 4],
+      ['Coogee Beach', -30.923036, 151.259052, 5],
+      ['Maroubra Beach', -20.950198, 151.259302, 1],
+      ['Manly Beach', -23.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -32.890542, 149.274856, 4],
+      ['Coogee Beach', -33.923036, 148.259052, 5],
+      ['Maroubra Beach', -34.950198, 149.259302, 1],
+      ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -33.890542, 151.274856, 4],
+      ['Coogee Beach', -33.923036, 151.259052, 5],
+      ['Maroubra Beach', -33.950198, 151.259302, 1],
+      ['Manly Beach', -31.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -32.890542, 149.274856, 4],
+      ['Coogee Beach', -33.923036, 148.259052, 5],
+      ['Maroubra Beach', -34.950198, 149.259302, 1],
+      ['Manly Beach', -33.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -33.890542, 151.274856, 4],
+      ['Coogee Beach', -33.923036, 151.259052, 5],
+      ['Maroubra Beach', -33.950198, 151.259302, 1],
+      ['Manly Beach', -31.80010128657071, 151.28747820854187, 2],
+      ['Bondi Beach', -32.890542, 149.274856, 4],
+      ['Coogee Beach', -33.923036, 148.259052, 5],
+      ['Maroubra Beach', -34.950198, 149.259302, 1],
+
+    ];
+
+
+    const directionsService = new google.maps.DirectionsService();
+    const directionsDisplay = new google.maps.DirectionsRenderer();
+    const map = new google.maps.Map(document.getElementById('map'), {
+      zoom: 7,
+      center: new google.maps.LatLng(-33.92, 151.25),
+      mapTypeId: google.maps.MapTypeId.ROADMAP
+    });
+    directionsDisplay.setMap(map);
+    const requestParams = {
+      travelMode: google.maps.TravelMode.DRIVING
+    };
+
+    const locationSet = (location, key) => new Promise(resolve => {
+      if (!locations[key+1]) return;
+      const directionsDisplayOnInner = new google.maps.DirectionsRenderer({preserveViewport :true});
+      const request = Object.assign({}, requestParams);
+      const marker1 = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[key][1], locations[key][2]),
+        map: map
+      });
+      const marker2 = new google.maps.Marker({
+        position: new google.maps.LatLng(locations[key+1][1], locations[key+1][2]),
+        map: map
+      });
+      request.origin = marker1.getPosition();
+      request.destination = marker2.getPosition();
+      directionsDisplayOnInner.setMap(map);
+      setTimeout(() => {
+        directionsService.route(request, function(result, status) {
+        if (status == google.maps.DirectionsStatus.OK) {
+          resolve();
+          console.log('destination rendered', key);
+          directionsDisplayOnInner.preserveViewport =  true;
+          directionsDisplayOnInner.setDirections(result);
+        } else {
+          resolve();
+          console.log('some error', status);
+        }
+        });
+      }, 1000);
+
+    });
+
+    locations.reduce((data, location, key) => {
+      return data.then(() => locationSet(location, key));
+    }, Promise.resolve());
+
+  }
+</script>
+
+
+
+<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyCDjv2ORbhhgDCGZOwI7fid_gDulJpZMlI&callback=initMap"
+        async defer></script>
+</body>
+</html>
